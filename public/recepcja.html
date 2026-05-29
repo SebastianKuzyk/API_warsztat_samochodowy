@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Recepcji - Warsztat Samochodowy</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" style="background-color: #6c3483;">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-tools"></i> Warsztat</h2>
+                <div class="user-info">
+                    <span id="userName">Recepcja</span> | <span id="userRole">RECEPCJA</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="navDashboard" onclick="showDashboard()">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" id="navNewOrder" onclick="showNewOrder()">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Nowe zlecenie</span>
+                </a>
+                <a href="#" class="nav-item" id="navReadyCars" onclick="showReadyCars()">
+                    <i class="fas fa-car"></i>
+                    <span>Auta do oddania</span>
+                </a>
+                <a href="#" class="nav-item" id="navOrders" onclick="showOrders()">
+                    <i class="fas fa-list"></i>
+                    <span>Wszystkie zlecenia</span>
+                </a>
+                <a href="#" class="nav-item" id="navInvoices" onclick="showInvoices()">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Faktury</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-danger btn-block" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Wyloguj
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="topbar-right">
+                    <div class="datetime">
+                        <span id="currentDate"></span>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="content-section">
+                    <!-- Profile Card -->
+                    <div class="card profile-card" style="background: linear-gradient(135deg, #6c3483 0%, #8e44ad 100%);">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h2 id="profileName">Witaj, Recepcja!</h2>
+                        <div class="profile-info">
+                            <p><i class="fas fa-user"></i> <span id="profileFullName">Anna Nowak</span></p>
+                            <p><i class="fas fa-briefcase"></i> Stanowisko: <strong>RECEPCJA</strong></p>
+                            <p><i class="fas fa-phone"></i> Nr. telefonu: <span id="profilePhone">444555666</span></p>
+                            <p><i class="fas fa-envelope"></i> Email: <span id="profileEmail">recepcja@warsztat.pl</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Wszystkich zleceń</h4>
+                                <div class="stat-value" id="statTotal">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Nierozpoczęte</h4>
+                                <div class="stat-value" id="statNotStarted">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-wrench"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>W trakcie</h4>
+                                <div class="stat-value" id="statInProgress">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Gotowe do odbioru</h4>
+                                <div class="stat-value" id="statReady">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Order Section -->
+                <div id="newOrderSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-plus-circle"></i> Nowe zlecenie naprawcze</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="newOrderForm">
+                                <h4>Dane klienta</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Imię *</label>
+                                        <input type="text" name="firstName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Nazwisko *</label>
+                                        <input type="text" name="lastName" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Telefon</label>
+                                        <input type="tel" name="phone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="email">
+                                    </div>
+                                </div>
+
+                                <h4 class="mt-20">Dane pojazdu</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Marka *</label>
+                                        <input type="text" name="make" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Model *</label>
+                                        <input type="text" name="model" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Rok produkcji</label>
+                                        <input type="number" name="year" min="1900" max="2030">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Nr rejestracyjny *</label>
+                                        <input type="text" name="plate" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>VIN</label>
+                                    <input type="text" name="vin" maxlength="17">
+                                </div>
+
+                                <h4 class="mt-20">Mechanik</h4>
+                                <div class="form-group">
+                                    <label>Przypisz mechanika *</label>
+                                    <select name="mechanic" required>
+                                        <option value="">-- Wybierz mechanika --</option>
+                                        <option value="1">Jan Kowalski</option>
+                                        <option value="2">Piotr Nowak</option>
+                                    </select>
+                                </div>
+
+                                <h4 class="mt-20">Zadania do wykonania</h4>
+                                <div id="tasksList">
+                                    <!-- Zadania dodawane dynamicznie -->
+                                </div>
+                                <button type="button" class="btn btn-info" onclick="addTask()">
+                                    <i class="fas fa-plus"></i> Dodaj zadanie
+                                </button>
+
+                                <div class="btn-group mt-20">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save"></i> Utwórz zlecenie
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="clearOrderForm()">
+                                        Wyczyść formularz
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ready Cars Section -->
+                <div id="readyCarsSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-car"></i> Auta gotowe do oddania klientom</h3>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadReadyCars()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+
+                            <div class="table-container mt-20">
+                                <table id="readyCarsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Klient</th>
+                                            <th>Pojazd</th>
+                                            <th>Rejestracja</th>
+                                            <th>Mechanik</th>
+                                            <th>Suma</th>
+                                            <th>Data zakończenia</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="readyCarsTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Section -->
+                <div id="ordersSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-list"></i> Wszystkie zlecenia</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Filtruj według statusu:</label>
+                                <select id="ordersStatusFilter" onchange="loadOrders()">
+                                    <option value="Wszystkie">Wszystkie</option>
+                                    <option value="Nierozpoczęte">Nierozpoczęte</option>
+                                    <option value="W trakcie">W trakcie</option>
+                                    <option value="Czeka na części">Czeka na części</option>
+                                    <option value="Gotowe do odbioru">Gotowe do odbioru</option>
+                                    <option value="Odebrane">Odebrane</option>
+                                </select>
+                            </div>
+
+                            <button class="btn btn-primary" onclick="loadOrders()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+
+                            <div class="table-container mt-20">
+                                <table id="ordersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Klient</th>
+                                            <th>Pojazd</th>
+                                            <th>Mechanik</th>
+                                            <th>Status</th>
+                                            <th>Zadania</th>
+                                            <th>Suma</th>
+                                            <th>Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Invoices Section -->
+                <div id="invoicesSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-file-invoice"></i> Wystawione faktury</h3>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadInvoices()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+                            <div class="table-container mt-20">
+                                <table id="invoicesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Typ</th>
+                                            <th>Numer</th>
+                                            <th>Klient</th>
+                                            <th>Pojazd</th>
+                                            <th>Suma</th>
+                                            <th>Status</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoicesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/recepcja.js"></script>
+</body>
+</html>

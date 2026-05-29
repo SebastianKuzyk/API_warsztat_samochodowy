@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Magazyniera - Warsztat Samochodowy</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" style="background-color: #a04000;">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-tools"></i> Warsztat</h2>
+                <div class="user-info">
+                    <span id="userName">Magazynier</span> | <span id="userRole">MAGAZYNIER</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="navDashboard" onclick="showDashboard()">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" id="navParts" onclick="showParts()">
+                    <i class="fas fa-boxes"></i>
+                    <span>Magazyn części</span>
+                </a>
+                <a href="#" class="nav-item" id="navRequests" onclick="showRequests()">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Zgłoszenia mechaników</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-danger btn-block" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Wyloguj
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="topbar-right">
+                    <div class="datetime">
+                        <span id="currentDate"></span>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="content-section">
+                    <!-- Profile Card -->
+                    <div class="card profile-card" style="background: linear-gradient(135deg, #a04000 0%, #d35400 100%);">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h2 id="profileName">Witaj, Magazynier!</h2>
+                        <div class="profile-info">
+                            <p><i class="fas fa-user"></i> <span id="profileFullName">Tomasz Kowalski</span></p>
+                            <p><i class="fas fa-briefcase"></i> Stanowisko: <strong>MAGAZYNIER</strong></p>
+                            <p><i class="fas fa-phone"></i> Nr. telefonu: <span id="profilePhone">555666777</span></p>
+                            <p><i class="fas fa-envelope"></i> Email: <span id="profileEmail">magazyn@warsztat.pl</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-boxes"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Różne części w bazie</h4>
+                                <div class="stat-value" id="statTotalParts">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Części na wyczerpaniu</h4>
+                                <div class="stat-value" id="statLowStock">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Nowe zgłoszenia</h4>
+                                <div class="stat-value" id="statNewRequests">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Gotowe do odbioru</h4>
+                                <div class="stat-value" id="statReadyParts">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parts Section -->
+                <div id="partsSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-boxes"></i> Magazyn części</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Szukaj części:</label>
+                                    <input type="text" id="partsSearchInput" placeholder="Wpisz nazwę części...">
+                                </div>
+                            </div>
+
+                            <div class="btn-group">
+                                <button class="btn btn-primary" onclick="loadParts()">
+                                    <i class="fas fa-sync"></i> Odśwież
+                                </button>
+                                <button class="btn btn-success" onclick="receiveDelivery()">
+                                    <i class="fas fa-truck"></i> Odbiór dostawy
+                                </button>
+                                <button class="btn btn-info" onclick="addNewPart()">
+                                    <i class="fas fa-plus"></i> Dodaj nową część
+                                </button>
+                            </div>
+
+                            <div class="table-container mt-20">
+                                <table id="partsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nazwa</th>
+                                            <th>Cena (zł)</th>
+                                            <th>Ilość na stanie</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="partsTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requests Section -->
+                <div id="requestsSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-clipboard-list"></i> Zgłoszenia mechaników</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Filtruj według statusu:</label>
+                                    <select id="requestsStatusFilter" onchange="loadRequests()">
+                                        <option value="Wszystkie">Wszystkie</option>
+                                        <option value="Brak odpowiedzi">Brak odpowiedzi</option>
+                                        <option value="Zamówiona">Zamówiona</option>
+                                        <option value="Gotowa do odbioru">Gotowa do odbioru</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Filtruj według typu:</label>
+                                    <select id="requestsTypeFilter" onchange="loadRequests()">
+                                        <option value="Wszystkie">Wszystkie</option>
+                                        <option value="W magazynie">✅ W magazynie</option>
+                                        <option value="Do zamówienia">🛑 Do zamówienia</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" onclick="loadRequests()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+
+                            <div class="table-container mt-20">
+                                <table id="requestsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Mechanik</th>
+                                            <th>Część</th>
+                                            <th>Ilość</th>
+                                            <th>Typ</th>
+                                            <th>Status</th>
+                                            <th>Data zgłoszenia</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="requestsTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/magazynier.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie - Warsztat Samochodowy</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-tabs {
+            display: flex;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 25px;
+        }
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .login-tab.active {
+            color: #2c3e50;
+            border-bottom-color: #3498db;
+        }
+        .login-tab i { margin-right: 6px; }
+        .login-info code {
+            background: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-tools"></i>
+                <h1>Warsztat Samochodowy</h1>
+                <p>System Zarządzania</p>
+            </div>
+
+            <div class="login-body">
+                <div class="login-tabs">
+                    <div class="login-tab active" data-tab="employee" onclick="switchTab('employee')">
+                        <i class="fas fa-user-tie"></i> Pracownik
+                    </div>
+                    <div class="login-tab" data-tab="client" onclick="switchTab('client')">
+                        <i class="fas fa-car"></i> Klient
+                    </div>
+                </div>
+
+                <!-- Logowanie pracownika -->
+                <form id="loginForm" data-form="employee" action="javascript:void(0);">
+                    <div class="form-group">
+                        <label for="login"><i class="fas fa-user"></i> Login</label>
+                        <input type="text" id="login" name="login" autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Hasło</label>
+                        <input type="password" id="password" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt"></i> Zaloguj się
+                    </button>
+                </form>
+
+                <!-- Logowanie klienta -->
+                <form id="clientLoginForm" data-form="client" style="display:none;" action="javascript:void(0);">
+                    <div class="form-group">
+                        <label for="plate"><i class="fas fa-id-card"></i> Numer rejestracyjny</label>
+                        <input type="text" id="plate" name="plate" placeholder="np. WA12345" style="text-transform:uppercase;">
+                    </div>
+                    <div class="form-group">
+                        <label for="code"><i class="fas fa-key"></i> Kod dostępu</label>
+                        <input type="text" id="code" name="code" placeholder="otrzymany od recepcji" style="text-transform:uppercase;">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt"></i> Sprawdź swoje zlecenie
+                    </button>
+                </form>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                <div class="login-info" id="employeeInfo">
+                    <p><strong>Domyślne konta pracowników:</strong></p>
+                    <ul>
+                        <li><code>admin</code> / <code>admin123</code></li>
+                        <li><code>mechanik</code> / <code>mechanik123</code></li>
+                        <li><code>recepcja</code> / <code>recepcja123</code></li>
+                        <li><code>magazynier</code> / <code>magazynier123</code></li>
+                    </ul>
+                </div>
+
+                <div class="login-info" id="clientInfo" style="display:none;">
+                    <p><strong>Logowanie klienta:</strong></p>
+                    <p style="font-size:13px;color:#7f8c8d;">
+                        Login = numer rejestracyjny twojego auta.<br>
+                        Hasło = unikalny kod dostępu, który otrzymałeś od recepcji
+                        po przyjęciu pojazdu do warsztatu.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

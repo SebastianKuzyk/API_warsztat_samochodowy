@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admina - Warsztat Samochodowy</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-tools"></i> Warsztat</h2>
+                <div class="user-info">
+                    <span id="userName">Admin</span> | <span id="userRole">ADMIN</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="navDashboard" onclick="showDashboard()">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" id="navUsers" onclick="showUsers()">
+                    <i class="fas fa-users"></i>
+                    <span>Pracownicy</span>
+                </a>
+                <a href="#" class="nav-item" id="navClients" onclick="showClients()">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Klienci</span>
+                </a>
+                <a href="#" class="nav-item" id="navRepairs" onclick="showRepairs()">
+                    <i class="fas fa-car"></i>
+                    <span>Naprawy</span>
+                </a>
+                <a href="#" class="nav-item" id="navInvoices" onclick="showInvoices()">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Faktury</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-danger btn-block" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Wyloguj
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="topbar-right">
+                    <div class="datetime">
+                        <span id="currentDate"></span>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="content-section">
+                    <!-- Profile Card -->
+                    <div class="card profile-card">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h2 id="profileName">Witaj, Admin!</h2>
+                        <div class="profile-info">
+                            <p><i class="fas fa-user"></i> <span id="profileFullName">Tomasz Nowak</span></p>
+                            <p><i class="fas fa-briefcase"></i> Stanowisko: <strong>ADMIN</strong></p>
+                            <p><i class="fas fa-phone"></i> Nr. telefonu: <span id="profilePhone">234567890</span></p>
+                            <p><i class="fas fa-envelope"></i> Email: <span id="profileEmail">admin@warsztat.pl</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Czeka na rozpoczęcie</h4>
+                                <div class="stat-value" id="statNotStarted">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-wrench"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>W trakcie naprawy</h4>
+                                <div class="stat-value" id="statInProgress">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Skończone dzisiaj</h4>
+                                <div class="stat-value" id="statCompletedToday">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Odebrane przez klientów</h4>
+                                <div class="stat-value" id="statPickedUp">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-line"></i> Statystyki finansowe (dzisiaj)</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon success">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <div class="stat-details">
+                                        <h4>Dochód z napraw</h4>
+                                        <div class="stat-value" id="statIncome">0.00 zł</div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-card">
+                                    <div class="stat-icon danger">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div class="stat-details">
+                                        <h4>Wydatki na części</h4>
+                                        <div class="stat-value" id="statPartsCost">0.00 zł</div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-card">
+                                    <div class="stat-icon info">
+                                        <i class="fas fa-chart-pie"></i>
+                                    </div>
+                                    <div class="stat-details">
+                                        <h4>Zysk netto</h4>
+                                        <div class="stat-value" id="statNetProfit">0.00 zł</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-bar"></i> Wykresy</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                                <div>
+                                    <h4 class="text-center">Aktywność dzisiaj</h4>
+                                    <canvas id="chartToday"></canvas>
+                                </div>
+                                <div>
+                                    <h4 class="text-center">Auta na warsztacie</h4>
+                                    <canvas id="chartCars"></canvas>
+                                </div>
+                                <div>
+                                    <h4 class="text-center">Finanse dzisiaj</h4>
+                                    <canvas id="chartFinance"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div id="usersSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-users"></i> Zarządzanie pracownikami</h3>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-success" onclick="openModal('addUserModal')">
+                                <i class="fas fa-plus"></i> Dodaj pracownika
+                            </button>
+
+                            <div class="table-container mt-20">
+                                <table id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Login</th>
+                                            <th>Rola</th>
+                                            <th>Imię</th>
+                                            <th>Nazwisko</th>
+                                            <th>Email</th>
+                                            <th>Telefon</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clients Section -->
+                <div id="clientsSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user-tie"></i> Lista klientów</h3>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadClients()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+
+                            <div class="table-container mt-20">
+                                <table id="clientsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Imię</th>
+                                            <th>Nazwisko</th>
+                                            <th>Telefon</th>
+                                            <th>Email</th>
+                                            <th>Pojazdy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="clientsTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Repairs Section -->
+                <div id="repairsSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-car"></i> Wszystkie naprawy</h3>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadRepairs()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+
+                            <div class="table-container mt-20">
+                                <table id="repairsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Pojazd</th>
+                                            <th>Klient</th>
+                                            <th>Mechanik</th>
+                                            <th>Status</th>
+                                            <th>Zadania</th>
+                                            <th>Suma</th>
+                                            <th>Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="repairsTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Invoices Section -->
+                <div id="invoicesSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-file-invoice"></i> Wszystkie faktury</h3>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadInvoices()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+                            <div class="table-container mt-20">
+                                <table id="invoicesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Typ</th>
+                                            <th>Numer</th>
+                                            <th>Klient</th>
+                                            <th>Pojazd</th>
+                                            <th>Suma</th>
+                                            <th>Status</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoicesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Add User -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Dodaj nowego pracownika</h3>
+                <span class="modal-close" onclick="closeModal('addUserModal')">&times;</span>
+            </div>
+            <form id="addUserForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Login *</label>
+                        <input type="text" name="login" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hasło *</label>
+                        <input type="password" name="password" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Imię</label>
+                        <input type="text" name="firstName">
+                    </div>
+                    <div class="form-group">
+                        <label>Nazwisko</label>
+                        <input type="text" name="lastName">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon</label>
+                        <input type="tel" name="phone">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Rola *</label>
+                    <select name="role" required>
+                        <option value="mechanic">Mechanik</option>
+                        <option value="recepcja">Recepcja</option>
+                        <option value="magazynier">Magazynier</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Zapisz
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addUserModal')">
+                        Anuluj
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

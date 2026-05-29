@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Mechanika - Warsztat Samochodowy</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-tools"></i> Warsztat</h2>
+                <div class="user-info">
+                    <span id="userName">Mechanik</span> | <span id="userRole">MECHANIK</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="navDashboard" onclick="showDashboard()">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" id="navCars" onclick="showCars()">
+                    <i class="fas fa-car"></i>
+                    <span>Moje zlecenia</span>
+                </a>
+                <a href="#" class="nav-item" id="navRequests" onclick="showRequests()">
+                    <i class="fas fa-box"></i>
+                    <span>Moje zgłoszenia</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-danger btn-block" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Wyloguj
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="topbar-right">
+                    <div class="datetime">
+                        <span id="currentDate"></span>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="content-section">
+                    <!-- Profile Card -->
+                    <div class="card profile-card">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+                        <h2 id="profileName">Witaj, Mechanik!</h2>
+                        <div class="profile-info">
+                            <p><i class="fas fa-user"></i> <span id="profileFullName">Jan Kowalski</span></p>
+                            <p><i class="fas fa-briefcase"></i> Stanowisko: <strong>MECHANIK</strong></p>
+                            <p><i class="fas fa-phone"></i> Nr. telefonu: <span id="profilePhone">111222333</span></p>
+                            <p><i class="fas fa-envelope"></i> Email: <span id="profileEmail">mechanik@warsztat.pl</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Nierozpoczęte</h4>
+                                <div class="stat-value" id="statNotStarted">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-wrench"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>W trakcie</h4>
+                                <div class="stat-value" id="statInProgress">0</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h4>Gotowe do odbioru</h4>
+                                <div class="stat-value" id="statReady">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cars Section -->
+                <div id="carsSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-car"></i> Moje zlecenia naprawcze</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Filtruj według statusu:</label>
+                                <select id="statusFilter" onchange="loadCars()">
+                                    <option value="Wszystkie">Wszystkie</option>
+                                    <option value="Nierozpoczęte">Nierozpoczęte</option>
+                                    <option value="W trakcie">W trakcie</option>
+                                    <option value="Czeka na części">Czeka na części</option>
+                                    <option value="Gotowe do odbioru">Gotowe do odbioru</option>
+                                </select>
+                            </div>
+
+                            <button class="btn btn-primary" onclick="loadCars()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+
+                            <div class="table-container mt-20">
+                                <table id="carsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Marka</th>
+                                            <th>Model</th>
+                                            <th>Rejestracja</th>
+                                            <th>Klient</th>
+                                            <th>Status</th>
+                                            <th>Zadania</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="carsTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requests Section -->
+                <div id="requestsSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-box"></i> Moje zgłoszenia części</h3>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadRequests()">
+                                <i class="fas fa-sync"></i> Odśwież
+                            </button>
+
+                            <div class="table-container mt-20">
+                                <table id="requestsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Część</th>
+                                            <th>Ilość</th>
+                                            <th>Typ</th>
+                                            <th>Status</th>
+                                            <th>Data zgłoszenia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="requestsTableBody">
+                                        <!-- Dane z JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Task Details -->
+    <div id="taskDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="modalTitle">Szczegóły zlecenia</h3>
+                <span class="modal-close" onclick="closeModal('taskDetailsModal')">&times;</span>
+            </div>
+            <div id="modalBody">
+                <!-- Dane z JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/mechanic.js"></script>
+</body>
+</html>

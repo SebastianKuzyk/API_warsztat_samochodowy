@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Klienta - Warsztat Samochodowy</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar" style="background-color: #16a085;">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-car"></i> Mój warsztat</h2>
+                <div class="user-info">
+                    <span id="userName">Klient</span> | <span id="userRole">KLIENT</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="navDashboard" onclick="showDashboard()">
+                    <i class="fas fa-home"></i> <span>Mój panel</span>
+                </a>
+                <a href="#" class="nav-item" id="navOrders" onclick="showOrders()">
+                    <i class="fas fa-wrench"></i> <span>Moje zlecenia</span>
+                </a>
+                <a href="#" class="nav-item" id="navInvoices" onclick="showInvoices()">
+                    <i class="fas fa-file-invoice"></i> <span>Faktury</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-danger btn-block" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Wyloguj
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="topbar">
+                <div class="topbar-left"><h1 id="pageTitle">Mój panel</h1></div>
+                <div class="topbar-right">
+                    <div class="datetime">
+                        <span id="currentDate"></span>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Dashboard -->
+                <div id="dashboardSection" class="content-section">
+                    <div class="card profile-card" style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);">
+                        <div class="profile-avatar"><i class="fas fa-user"></i></div>
+                        <h2 id="profileName">Witaj!</h2>
+                        <div class="profile-info">
+                            <p><i class="fas fa-user"></i> <span id="profileFullName"></span></p>
+                            <p><i class="fas fa-phone"></i> <span id="profilePhone">Brak</span></p>
+                            <p><i class="fas fa-envelope"></i> <span id="profileEmail">Brak</span></p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-car"></i> Moje pojazdy</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="vehiclesList"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-history"></i> Aktywne zlecenia</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="activeOrdersList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wszystkie zlecenia -->
+                <div id="ordersSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-wrench"></i> Historia moich zleceń</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table id="ordersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nr</th>
+                                            <th>Pojazd</th>
+                                            <th>Mechanik</th>
+                                            <th>Status</th>
+                                            <th>Suma</th>
+                                            <th>Data</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Faktury -->
+                <div id="invoicesSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-file-invoice"></i> Moje faktury</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table id="invoicesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Numer</th>
+                                            <th>Pojazd</th>
+                                            <th>Suma</th>
+                                            <th>Status</th>
+                                            <th>Data</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoicesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/klient.js"></script>
+</body>
+</html>

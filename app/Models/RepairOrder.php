@@ -20,7 +20,7 @@ class RepairOrder extends Model
 
     protected $casts = [
         'completed_at'  => 'datetime',
-        'service_price' => 'decimal:2',
+        'service_price' => 'float',
     ];
 
     public const STATUSES = [

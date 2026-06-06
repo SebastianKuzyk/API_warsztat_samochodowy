@@ -258,6 +258,111 @@ async function loadRepairs() {
     }
 }
 
+// ===========================================================
+// Kody dostępu klientów (admin + recepcja)
+// ===========================================================
+function showPasswords() {
+    showSection('passwordsSection');
+    setActiveNav('navPasswords');
+    document.getElementById('pageTitle').textContent = 'Kody dostępu klientów';
+    loadVehicles();
+}
+
+let vehiclesCache = [];
+let searchTimer = null;
+
+async function loadVehicles(search = '') {
+    const tbody = document.getElementById('vehiclesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Ładowanie…</td></tr>';
+
+    try {
+        const params = {};
+        if (search) params.search = search;
+        const res = await api.listVehicles(params);
+        vehiclesCache = res.data || [];
+        renderVehicles(vehiclesCache);
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#e74c3c;">Błąd: ${escapeHtml(err.message)}</td></tr>`;
+    }
+}
+
+function searchVehicles(query) {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadVehicles(query.trim()), 300);
+}
+
+function renderVehicles(vehicles) {
+    const tbody = document.getElementById('vehiclesTableBody');
+    if (!tbody) return;
+
+    if (!vehicles.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Brak pojazdów</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = vehicles.map(v => `
+        <tr>
+            <td><strong>${escapeHtml(v.license_plate || '—')}</strong></td>
+            <td>${escapeHtml(v.make || '')} ${escapeHtml(v.model || '')} ${v.year ? `(${v.year})` : ''}</td>
+            <td>${escapeHtml(v.customer_name || '—')}</td>
+            <td>${escapeHtml(v.customer_phone || '—')}</td>
+            <td>
+                <code style="
+                    background:#2c3e50;color:#e74c3c;
+                    padding:4px 10px;border-radius:4px;
+                    font-size:16px;font-weight:bold;
+                    letter-spacing:2px;">
+                    ${escapeHtml(v.access_code || '—')}
+                </code>
+            </td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="regenerateVehicleCode(${v.id}, '${escapeHtml(v.license_plate || '')}')">
+                    <i class="fas fa-sync"></i> Nowy kod
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+async function regenerateVehicleCode(vehicleId, plate) {
+    if (!confirm(`Wygenerować nowy kod dla pojazdu ${plate}?\n\nStary kod przestanie działać — przekaż nowy kod klientowi!`)) return;
+    try {
+        const res = await api.regenerateCode(vehicleId);
+        const newCode = res.data.access_code;
+        showNotification(`Nowy kod dla ${plate}: ${newCode}`, 'success');
+        // Pokaż w dużym modalu żeby łatwo odczytać
+        showDetailsModal(
+            `Nowy kod dostępu — ${plate}`,
+            `<div style="text-align:center;padding:20px 0;">
+                <p style="font-size:14px;color:#7f8c8d;margin-bottom:15px;">
+                    Przekaż klientowi:
+                </p>
+                <p style="font-size:14px;margin-bottom:6px;">
+                    <strong>Login (nr rejestracyjny):</strong><br>
+                    <code style="font-size:20px;">${escapeHtml(plate)}</code>
+                </p>
+                <p style="font-size:14px;margin-top:15px;">
+                    <strong>Kod dostępu (hasło):</strong><br>
+                    <code style="
+                        font-size:36px;font-weight:bold;letter-spacing:4px;
+                        background:#2c3e50;color:#e74c3c;
+                        padding:10px 20px;border-radius:6px;
+                        display:inline-block;margin-top:8px;">
+                        ${escapeHtml(newCode)}
+                    </code>
+                </p>
+                <p style="font-size:12px;color:#e74c3c;margin-top:20px;">
+                    ⚠️ Stary kod jest już nieważny.
+                </p>
+            </div>`
+        );
+        loadVehicles(document.getElementById('vehicleSearchInput')?.value || '');
+    } catch (err) {
+        showNotification('Błąd: ' + err.message, 'error');
+    }
+}
+
 // Init
 document.addEventListener('DOMContentLoaded', function () {
     loadDashboard();

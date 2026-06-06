@@ -21,6 +21,12 @@ class PartRequestController extends Controller
 
         if ($status = $request->query('status')) {
             if ($status !== 'Wszystkie') $query->where('status', $status);
+        } else {
+            // Domyślnie ukryj odebrane starsze niż 24h (zostają przez 24h po odbiorze)
+            $query->where(function ($q) {
+                $q->where('status', '!=', 'Odebrana')
+                  ->orWhere('updated_at', '>=', now()->subDay());
+            });
         }
         if ($type = $request->query('type')) {
             if ($type === 'W magazynie')   $query->whereNotNull('part_id');
@@ -109,10 +115,29 @@ class PartRequestController extends Controller
             return ApiResponse::error('Brak uprawnień', 403);
         }
         $data = $request->validate([
-            'status' => 'required|in:Brak odpowiedzi,Zamówiona,Gotowa do odbioru',
+            'status' => 'required|in:Brak odpowiedzi,Zamówiona,Gotowa do odbioru,Odebrana',
         ]);
         $part_request->update($data);
         return ApiResponse::success([], 'Status zaktualizowany');
+    }
+
+    /**
+     * PUT /api/v1/part-requests/{id}/receive
+     * Mechanik potwierdza odbiór części — status = "Odebrana".
+     * Po 24h od odbioru zgłoszenie nie jest pokazywane (filtr w index).
+     */
+    public function markReceived(Request $request, PartRequest $part_request)
+    {
+        $role = $request->session()->get('user_role');
+        // Tylko mechanik właściciel lub admin
+        if ($role === 'mechanic' && (int)$part_request->mechanic_id !== (int)$request->session()->get('user_id')) {
+            return ApiResponse::error('Brak uprawnień', 403);
+        }
+        if (!in_array($role, ['mechanic', 'admin', 'magazynier'], true)) {
+            return ApiResponse::error('Brak uprawnień', 403);
+        }
+        $part_request->update(['status' => 'Odebrana']);
+        return ApiResponse::success([], 'Część oznaczona jako odebrana');
     }
 
     public function destroy(PartRequest $part_request)

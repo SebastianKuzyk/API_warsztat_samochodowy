@@ -75,7 +75,7 @@ async function loadParts() {
                 <tr style="cursor:pointer;" onclick="receiveDeliveryForPart(${p.id})">
                     <td>${p.id}</td>
                     <td>${escapeHtml(p.name)}</td>
-                    <td>${p.price.toFixed(2)}</td>
+                    <td>${parseFloat(p.price || 0).toFixed(2)}</td>
                     <td>${p.quantity}</td>
                     <td><span class="badge ${cls}">${badge}</span></td>
                 </tr>
@@ -183,7 +183,7 @@ async function loadRequests() {
                     <td><span class="badge ${statusCls}">${escapeHtml(r.status)}</span></td>
                     <td>${formatDate(r.created_at)}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" onclick="changeRequestStatus(${r.id}, '${escapeHtml(r.status)}')">
+                        <button class="btn btn-info btn-sm" onclick="changeRequestStatus(${r.id}, '${escapeHtml(r.status)}', '${escapeHtml(r.part_name || '-')}')">
                             <i class="fas fa-edit"></i> Zmień status
                         </button>
                     </td>
@@ -195,21 +195,77 @@ async function loadRequests() {
     }
 }
 
-async function changeRequestStatus(reqId, currentStatus) {
+async function changeRequestStatus(reqId, currentStatus, partName) {
     const statuses = ['Brak odpowiedzi', 'Zamówiona', 'Gotowa do odbioru'];
-    let prompt_text = `Wybierz nowy status (aktualny: ${currentStatus}):\n\n`;
-    statuses.forEach((s, i) => prompt_text += `${i + 1}. ${s}\n`);
 
-    const idx = parseInt(prompt(prompt_text));
-    if (!idx || idx < 1 || idx > statuses.length) return;
+    // Modal z selectem zamiast prompt()
+    const overlay = document.createElement('div');
+    overlay.className = 'modal active';
+    overlay.style.zIndex = 12000;
 
-    try {
-        await api.setRequestStatus(reqId, statuses[idx - 1]);
-        showNotification(`Status: ${statuses[idx - 1]}`, 'success');
-        loadRequests();
-        loadDashboard();
-    } catch (err) {
-        showNotification('Błąd: ' + err.message, 'error');
+    const opts = statuses.map(s =>
+        `<option value="${s}" ${s === currentStatus ? 'selected' : ''}>${escapeHtml(s)}</option>`
+    ).join('');
+
+    overlay.innerHTML = `
+        <div class="modal-content" style="max-width:420px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Zmień status zgłoszenia</h3>
+                <span class="modal-close" data-action="cancel">&times;</span>
+            </div>
+            <div style="padding:0 20px 20px;">
+                <p><strong>Część:</strong> ${escapeHtml(partName || 'Nieznana')}</p>
+                <p><strong>Aktualny status:</strong>
+                    <span class="badge ${statusCls(currentStatus)}">${escapeHtml(currentStatus)}</span>
+                </p>
+                <div class="form-group" style="margin-top:15px;">
+                    <label><strong>Nowy status:</strong></label>
+                    <select id="newStatusSelect" style="width:100%;padding:8px;margin-top:6px;border:1px solid #ddd;border-radius:4px;">
+                        ${opts}
+                    </select>
+                </div>
+                <div class="btn-group" style="margin-top:15px;">
+                    <button class="btn btn-success" data-action="save">
+                        <i class="fas fa-save"></i> Zapisz
+                    </button>
+                    <button class="btn btn-secondary" data-action="cancel">Anuluj</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', async (e) => {
+        const act = e.target.dataset.action;
+        if (act === 'cancel' || e.target === overlay) {
+            overlay.remove();
+            return;
+        }
+        if (act === 'save') {
+            const newStatus = overlay.querySelector('#newStatusSelect').value;
+            if (newStatus === currentStatus) {
+                overlay.remove();
+                return;
+            }
+            try {
+                await api.setRequestStatus(reqId, newStatus);
+                showNotification(`Status zmieniony na: ${newStatus}`, 'success');
+                overlay.remove();
+                loadRequests();
+                loadDashboard();
+            } catch (err) {
+                showNotification('Błąd: ' + err.message, 'error');
+            }
+        }
+    });
+}
+
+function statusCls(status) {
+    switch (status) {
+        case 'Gotowa do odbioru': return 'badge-success';
+        case 'Zamówiona':         return 'badge-warning';
+        case 'Odebrana':          return 'badge-info';
+        default:                  return 'badge-secondary';
     }
 }
 

@@ -140,6 +140,8 @@ const api = {
         apiFetch('part-requests', { method: 'POST', body: payload }),
     setRequestStatus: (id, status) =>
         apiFetch(`part-requests/${id}`, { method: 'PUT', body: { status } }),
+    receiveRequest: (id) =>
+        apiFetch(`part-requests/${id}/receive`, { method: 'PUT' }),
 
     // ---------- Stats ----------
     stats: () => apiFetch('stats'),
@@ -147,6 +149,14 @@ const api = {
     // ---------- Client panel ----------
     clientDashboard: () =>
         apiFetch('client/dashboard'),
+
+    // ---------- Vehicles ----------
+    listVehicles: (filters = {}) =>
+        apiFetch('vehicles', { params: filters }),
+    getVehicle: (id) =>
+        apiFetch(`vehicles/${id}`),
+    regenerateCode: (id) =>
+        apiFetch(`vehicles/${id}/regenerate-code`, { method: 'PUT' }),
 
     // ---------- Invoices ----------
     listInvoices: () =>

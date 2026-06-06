@@ -14,7 +14,7 @@ class Part extends Model
     protected $fillable = ['name', 'price', 'quantity'];
 
     protected $casts = [
-        'price'    => 'decimal:2',
+        'price'    => 'float',
         'quantity' => 'integer',
     ];
 

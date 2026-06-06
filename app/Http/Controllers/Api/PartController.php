@@ -15,12 +15,22 @@ class PartController extends Controller
         if ($search = $request->query('search')) {
             $query->where('name', 'like', "%{$search}%");
         }
-        return ApiResponse::success($query->get());
+        return ApiResponse::success($query->get()->map(fn (Part $p) => [
+            'id'       => (int)   $p->id,
+            'name'     =>         $p->name,
+            'price'    => (float) $p->price,
+            'quantity' => (int)   $p->quantity,
+        ]));
     }
 
     public function show(Part $part)
     {
-        return ApiResponse::success($part);
+        return ApiResponse::success([
+            'id'       => (int)   $part->id,
+            'name'     =>         $part->name,
+            'price'    => (float) $part->price,
+            'quantity' => (int)   $part->quantity,
+        ]);
     }
 
     public function store(Request $request)

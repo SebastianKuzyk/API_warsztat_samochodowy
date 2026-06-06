@@ -419,12 +419,12 @@ async function openAddPartDialog() {
 // ---------- Moje zgłoszenia ----------
 async function loadRequests() {
     const tbody = document.getElementById('requestsTableBody');
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Ładowanie…</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Ładowanie…</td></tr>';
     try {
         const res = await api.listRequests({ mine: 1 });
         const reqs = res.data || [];
         if (!reqs.length) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Brak zgłoszeń</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Brak zgłoszeń</td></tr>';
             return;
         }
 
@@ -432,7 +432,16 @@ async function loadRequests() {
             const typeCls = r.type === 'W magazynie' ? 'badge-success' : 'badge-danger';
             const statusCls =
                 r.status === 'Gotowa do odbioru' ? 'badge-success' :
-                r.status === 'Zamówiona'        ? 'badge-warning' : 'badge-secondary';
+                r.status === 'Zamówiona'         ? 'badge-warning' :
+                r.status === 'Odebrana'          ? 'badge-info'    : 'badge-secondary';
+
+            // Przycisk "Odebrane" — widoczny tylko gdy status = "Gotowa do odbioru"
+            const receiveBtn = r.status === 'Gotowa do odbioru'
+                ? `<button class="btn btn-success btn-sm" onclick="markRequestReceived(${r.id})">
+                       <i class="fas fa-check"></i> Odebrane
+                   </button>`
+                : '';
+
             return `
                 <tr>
                     <td>${escapeHtml(r.part_name || '-')}</td>
@@ -440,11 +449,23 @@ async function loadRequests() {
                     <td><span class="badge ${typeCls}">${escapeHtml(r.type)}</span></td>
                     <td><span class="badge ${statusCls}">${escapeHtml(r.status)}</span></td>
                     <td>${formatDate(r.created_at)}</td>
+                    <td>${receiveBtn}</td>
                 </tr>
             `;
         }).join('');
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#e74c3c;">Błąd: ${escapeHtml(err.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#e74c3c;">Błąd: ${escapeHtml(err.message)}</td></tr>`;
+    }
+}
+
+async function markRequestReceived(reqId) {
+    if (!confirm('Potwierdzasz odbiór tej części z magazynu?')) return;
+    try {
+        await api.receiveRequest(reqId);
+        showNotification('Część oznaczona jako odebrana — zniknie z listy po 24h', 'success');
+        loadRequests();
+    } catch (err) {
+        showNotification('Błąd: ' + err.message, 'error');
     }
 }
 

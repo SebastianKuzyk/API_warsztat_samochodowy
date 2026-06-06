@@ -13,7 +13,7 @@ class ServiceType extends Model
     protected $fillable = ['name', 'default_price', 'description'];
 
     protected $casts = [
-        'default_price' => 'decimal:2',
+        'default_price' => 'float',
     ];
 
     public function tasks(): HasMany

@@ -20,9 +20,9 @@ class Invoice extends Model
     ];
 
     protected $casts = [
-        'tasks_total' => 'decimal:2',
-        'parts_total' => 'decimal:2',
-        'total'       => 'decimal:2',
+        'tasks_total' => 'float',
+        'parts_total' => 'float',
+        'total'       => 'float',
         'paid'        => 'boolean',
         'due_date'    => 'date',
         'issued_at'   => 'datetime',

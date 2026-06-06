@@ -39,6 +39,10 @@
                     <i class="fas fa-file-invoice"></i>
                     <span>Faktury</span>
                 </a>
+                <a href="#" class="nav-item" id="navPasswords" onclick="showPasswords()">
+                    <i class="fas fa-key"></i>
+                    <span>Kody klientów</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -316,6 +320,44 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Passwords Section -->
+                <div id="passwordsSection" class="content-section hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-key"></i> Kody dostępu klientów</h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="color:#7f8c8d;font-size:13px;">
+                                <i class="fas fa-info-circle"></i>
+                                Klient loguje się podając numer rejestracyjny jako login i poniższy kod jako hasło.
+                                W razie zagubienia kodu użyj przycisku <strong>Nowy kod</strong>.
+                            </p>
+                            <div class="form-group" style="max-width:400px;margin-bottom:15px;">
+                                <label>Szukaj (rejestracja, klient, VIN):</label>
+                                <input type="text" id="vehicleSearchInput"
+                                       placeholder="np. WA12345 lub Kowalski"
+                                       oninput="searchVehicles(this.value)">
+                            </div>
+                            <div class="table-container">
+                                <table id="vehiclesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Rejestracja</th>
+                                            <th>Marka / Model</th>
+                                            <th>Klient</th>
+                                            <th>Telefon</th>
+                                            <th style="color:#e74c3c;">Kod dostępu</th>
+                                            <th>Akcje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vehiclesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>

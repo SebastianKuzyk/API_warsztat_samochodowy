@@ -10,16 +10,8 @@ use App\Http\Controllers\Api\RepairOrderController;
 use App\Http\Controllers\Api\ServiceTypeController;
 use App\Http\Controllers\Api\StatsController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\VehicleController;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes — Warsztat Samochodowy (Laravel 13)
-|--------------------------------------------------------------------------
-|
-| Wszystkie trasy używają sesji (a nie tokenów Sanctum), żeby frontend
-| HTML/JS mógł korzystać z `credentials: 'include'` i ciasteczka sesji.
-*/
 
 Route::prefix('v1')->middleware(['web'])->group(function () {
 
@@ -29,17 +21,18 @@ Route::prefix('v1')->middleware(['web'])->group(function () {
     Route::post('auth/logout',        [AuthController::class, 'logout']);
     Route::get ('auth/check',         [AuthController::class, 'check']);
 
-    // ----- Profil zalogowanego (każda zalogowana rola) -----
     Route::middleware('auth.session')->group(function () {
+
+        // Profil
         Route::put('auth/profile', [AuthController::class, 'updateProfile']);
 
-        // Dashboard / statystyki
+        // Statystyki
         Route::get('stats', [StatsController::class, 'index']);
 
-        // Klient — własny panel (zlecenia, faktury, pojazdy)
+        // Panel klienta
         Route::get('client/dashboard', [ClientController::class, 'dashboard']);
 
-        // Słowniki ogólnodostępne
+        // Słowniki
         Route::get('service-types', [ServiceTypeController::class, 'index']);
 
         // CRUD
@@ -50,18 +43,26 @@ Route::prefix('v1')->middleware(['web'])->group(function () {
         Route::apiResource('part-requests',  PartRequestController::class);
         Route::apiResource('invoices',       InvoiceController::class);
 
-        // Akcje dodatkowe na zleceniach
-        Route::post  ('repair-orders/{repair_order}/tasks',                [RepairOrderController::class, 'addTask']);
-        Route::put   ('repair-orders/{repair_order}/tasks',                [RepairOrderController::class, 'updateTasks']);
-        Route::put   ('repair-orders/{repair_order}/tasks/edit',           [RepairOrderController::class, 'editTasks']);
-        Route::delete('repair-orders/{repair_order}/tasks/{task}',         [RepairOrderController::class, 'deleteTask']);
-        Route::post  ('repair-orders/{repair_order}/parts',                [RepairOrderController::class, 'addPart']);
-        Route::put   ('repair-orders/{repair_order}/status',               [RepairOrderController::class, 'setStatus']);
+        // Zlecenia — akcje dodatkowe
+        Route::post  ('repair-orders/{repair_order}/tasks',       [RepairOrderController::class, 'addTask']);
+        Route::put   ('repair-orders/{repair_order}/tasks',       [RepairOrderController::class, 'updateTasks']);
+        Route::put   ('repair-orders/{repair_order}/tasks/edit',  [RepairOrderController::class, 'editTasks']);
+        Route::delete('repair-orders/{repair_order}/tasks/{task}',[RepairOrderController::class, 'deleteTask']);
+        Route::post  ('repair-orders/{repair_order}/parts',       [RepairOrderController::class, 'addPart']);
+        Route::put   ('repair-orders/{repair_order}/status',      [RepairOrderController::class, 'setStatus']);
 
-        // Akcje na fakturach
+        // Faktury
         Route::put('invoices/{invoice}/paid', [InvoiceController::class, 'setPaid']);
 
-        // Akcje na częściach
-        Route::put('parts/{part}/restock',    [PartController::class, 'restock']);
+        // Części — dostawa
+        Route::put('parts/{part}/restock', [PartController::class, 'restock']);
+
+        // Zgłoszenia — mechanik odbiera część
+        Route::put('part-requests/{part_request}/receive', [PartRequestController::class, 'markReceived']);
+
+        // Pojazdy — kody dostępu (admin/recepcja)
+        Route::get('vehicles',                                [VehicleController::class, 'index']);
+        Route::get('vehicles/{vehicle}',                      [VehicleController::class, 'show']);
+        Route::put('vehicles/{vehicle}/regenerate-code',      [VehicleController::class, 'regenerateCode']);
     });
 });

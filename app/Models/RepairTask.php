@@ -16,7 +16,7 @@ class RepairTask extends Model
     ];
 
     protected $casts = [
-        'price'        => 'decimal:2',
+        'price'        => 'float',
         'is_completed' => 'boolean',
         'needs_parts'  => 'boolean',
     ];

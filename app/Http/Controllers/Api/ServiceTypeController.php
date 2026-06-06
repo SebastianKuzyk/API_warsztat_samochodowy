@@ -12,10 +12,10 @@ class ServiceTypeController extends Controller
     public function index()
     {
         $services = ServiceType::orderBy('name')->get()->map(fn ($s) => [
-            'id'            => $s->id,
-            'name'          => $s->name,
+            'id'            => (int)   $s->id,
+            'name'          =>         $s->name,
             'default_price' => (float) $s->default_price,
-            'description'   => $s->description,
+            'description'   =>         $s->description,
         ]);
         return ApiResponse::success($services);
     }
